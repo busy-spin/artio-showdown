@@ -18,6 +18,8 @@ public class ArtioLifecycleHandler implements SessionHandler, SessionAcquireHand
 
     private boolean readyToFire = false;
 
+    private Session session;
+
     MarketDataIncrementalRefreshEncoder encoder = new MarketDataIncrementalRefreshEncoder();
 
     MutableAsciiBuffer mutableAsciiBuffer = new MutableAsciiBuffer(ByteBuffer.allocateDirect(4 * 1014));
@@ -51,6 +53,7 @@ public class ArtioLifecycleHandler implements SessionHandler, SessionAcquireHand
                                                       OnMessageInfo messageInfo) {
         if (HeartbeatDecoder.MESSAGE_TYPE == messageType) {
             System.out.println("Heart beat received");
+            this.session = session;
             readyToFire  = true;
         }
         return ControlledFragmentHandler.Action.CONTINUE;
@@ -82,6 +85,14 @@ public class ArtioLifecycleHandler implements SessionHandler, SessionAcquireHand
     public void onSessionExists(FixLibrary fixLibrary, long l, String s, String s1, String s2,
                                 String s3, String s4, String s5, int i, int i1) {
 
+    }
+
+    public boolean isReadyToFire() {
+        return readyToFire;
+    }
+
+    public Session session() {
+        return session;
     }
 
 }
