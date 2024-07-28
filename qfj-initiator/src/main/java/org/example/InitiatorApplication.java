@@ -34,7 +34,8 @@ public class InitiatorApplication implements Application {
 
     @Override
     public void onLogout(SessionID sessionID) {
-        hasLogOn = true;
+        this.sessionId = null;
+        hasLogOn = false;
     }
 
     @Override
