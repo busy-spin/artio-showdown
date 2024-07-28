@@ -2,6 +2,7 @@ package org.example;
 
 import io.aeron.logbuffer.ControlledFragmentHandler;
 import io.github.busy_spin.artio_initiator.codecs.FixDictionaryImpl;
+import io.github.busy_spin.artio_initiator.codecs.decoder.MarketDataIncrementalRefreshDecoder;
 import org.agrona.DirectBuffer;
 import uk.co.real_logic.artio.Reply;
 import uk.co.real_logic.artio.library.*;
@@ -38,7 +39,19 @@ public class ArtioLifecycleHandler implements SessionHandler, SessionAcquireHand
     }
 
     @Override
-    public ControlledFragmentHandler.Action onMessage(DirectBuffer directBuffer, int i, int i1, int i2, Session session, int i3, long l, long l1, long l2, OnMessageInfo onMessageInfo) {
+    public ControlledFragmentHandler.Action onMessage(DirectBuffer buffer,
+                                                      int offset,
+                                                      int length,
+                                                      int libraryId,
+                                                      Session session,
+                                                      int sequenceIndex,
+                                                      long messageType,
+                                                      long timestampInNs,
+                                                      long position,
+                                                      OnMessageInfo messageInfo) {
+        if (MarketDataIncrementalRefreshDecoder.MESSAGE_TYPE == messageType) {
+            System.out.println("35=X message received.");
+        }
         return ControlledFragmentHandler.Action.CONTINUE;
     }
 

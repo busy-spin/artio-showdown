@@ -3,6 +3,10 @@ package org.example;
 import quickfix.*;
 
 public class AcceptorApplication implements Application {
+
+    private SessionID sessionId;
+
+    private volatile boolean hasLogOn;
     @Override
     public void onCreate(SessionID sessionID) {
 
@@ -10,12 +14,13 @@ public class AcceptorApplication implements Application {
 
     @Override
     public void onLogon(SessionID sessionID) {
-
+        this.sessionId = sessionID;
+        hasLogOn = true;
     }
 
     @Override
     public void onLogout(SessionID sessionID) {
-
+        hasLogOn = true;
     }
 
     @Override
@@ -36,5 +41,13 @@ public class AcceptorApplication implements Application {
     @Override
     public void fromApp(Message message, SessionID sessionID) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue, UnsupportedMessageType {
 
+    }
+
+    public SessionID sessionID() {
+        return sessionId;
+    }
+
+    public boolean isHasLogOn() {
+        return hasLogOn;
     }
 }

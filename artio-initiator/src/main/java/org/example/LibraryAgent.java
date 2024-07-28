@@ -35,7 +35,8 @@ public class LibraryAgent implements Agent {
                 .libraryConnectHandler(lifecycleHandler)
                 .sessionAcquireHandler(lifecycleHandler)
                 .sessionExistsHandler(lifecycleHandler)
-                .libraryAeronChannels(Collections.singletonList(CommonContext.IPC_CHANNEL));
+                .libraryAeronChannels(Collections.singletonList(CommonContext.IPC_CHANNEL))
+                .defaultHeartbeatIntervalInS(15);
 
         libraryConfiguration.aeronContext().aeronDirectoryName(aeronDirName);
 
