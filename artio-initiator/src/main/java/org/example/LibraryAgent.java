@@ -21,16 +21,15 @@ public class LibraryAgent implements Agent {
 
     // initialize to a value so that first duty cycle will do a connection check
     private long lastConnectCheckTime = timeNow - connectCheckWindow - 1;
-    private ArtioLifecycleHandler lifecycleHandler;
+    private final ArtioLifecycleHandler lifecycleHandler;
 
-    public LibraryAgent(String aeronDirName) {
+    public LibraryAgent(String aeronDirName, ArtioLifecycleHandler lifecycleHandler) {
         this.aeronDirName = aeronDirName;
+        this.lifecycleHandler = lifecycleHandler;
     }
 
     @Override
     public void onStart() {
-
-        lifecycleHandler = new ArtioLifecycleHandler();
         LibraryConfiguration libraryConfiguration = new LibraryConfiguration()
                 .libraryConnectHandler(lifecycleHandler)
                 .sessionAcquireHandler(lifecycleHandler)
@@ -52,7 +51,7 @@ public class LibraryAgent implements Agent {
             lastConnectCheckTime = timeNow;
         }
         timeNow = SystemEpochClock.INSTANCE.time();
-        return 0;
+        return 1;
     }
 
     @Override

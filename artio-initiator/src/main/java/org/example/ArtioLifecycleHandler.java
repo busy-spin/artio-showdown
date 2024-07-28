@@ -3,17 +3,31 @@ package org.example;
 import io.aeron.logbuffer.ControlledFragmentHandler;
 import io.github.busy_spin.artio_initiator.codecs.FixDictionaryImpl;
 import io.github.busy_spin.artio_initiator.codecs.decoder.MarketDataIncrementalRefreshDecoder;
+import org.HdrHistogram.Histogram;
 import org.agrona.DirectBuffer;
+import org.agrona.concurrent.SystemEpochClock;
 import uk.co.real_logic.artio.Reply;
+import uk.co.real_logic.artio.fields.UtcTimestampDecoder;
 import uk.co.real_logic.artio.library.*;
 import uk.co.real_logic.artio.messages.DisconnectReason;
 import uk.co.real_logic.artio.session.Session;
+import uk.co.real_logic.artio.util.MutableAsciiBuffer;
+
+import java.nio.ByteBuffer;
 
 public class ArtioLifecycleHandler implements SessionHandler, SessionAcquireHandler, LibraryConnectHandler, SessionExistsHandler {
 
 
     private FixLibrary fixLibrary;
     private Reply<Session> sessionReply;
+
+    private Histogram histogram = new Histogram(3);
+
+    UtcTimestampDecoder timestampDecoder = new UtcTimestampDecoder(false);
+
+    MarketDataIncrementalRefreshDecoder decoder = new MarketDataIncrementalRefreshDecoder();
+
+    MutableAsciiBuffer mutableAsciiBuffer = new MutableAsciiBuffer(ByteBuffer.allocateDirect(4 * 1014));
 
     SessionConfiguration sessionConfig = SessionConfiguration.builder()
             .fixDictionary(FixDictionaryImpl.class)
@@ -50,7 +64,12 @@ public class ArtioLifecycleHandler implements SessionHandler, SessionAcquireHand
                                                       long position,
                                                       OnMessageInfo messageInfo) {
         if (MarketDataIncrementalRefreshDecoder.MESSAGE_TYPE == messageType) {
-            System.out.println("35=X message received.");
+            mutableAsciiBuffer.wrap(buffer, offset, length);
+
+            decoder.decode(mutableAsciiBuffer, 0, length);
+            long time = timestampDecoder.decode(decoder.header().sendingTime());
+
+            histogram.recordValue(SystemEpochClock.INSTANCE.time() - time);
         }
         return ControlledFragmentHandler.Action.CONTINUE;
     }
@@ -81,6 +100,10 @@ public class ArtioLifecycleHandler implements SessionHandler, SessionAcquireHand
     public void onSessionExists(FixLibrary fixLibrary, long l, String s, String s1, String s2,
                                 String s3, String s4, String s5, int i, int i1) {
 
+    }
+
+    public Histogram getHistogram() {
+        return histogram;
     }
 
     public void keepConnected() {

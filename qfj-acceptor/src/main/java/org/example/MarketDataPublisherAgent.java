@@ -10,13 +10,13 @@ public class MarketDataPublisherAgent implements Agent {
 
     private final AcceptorApplication application;
 
-    private int maxMessagePerWindow = 1;
+    private final int maxMessagePerWindow = 500;
 
     private int messageInThisWindow = 0;
 
     private long windowStartTime = SystemEpochClock.INSTANCE.time();
 
-    private long windowLengthInMs = 1_000;
+    private final long windowLengthInMs = 1;
 
 
 
@@ -94,7 +94,7 @@ public class MarketDataPublisherAgent implements Agent {
                 messageInThisWindow = 0;
             }
 
-            if (messageInThisWindow > maxMessagePerWindow) {
+            if (messageInThisWindow < maxMessagePerWindow) {
                 MarketDataIncrementalRefresh message = new MarketDataIncrementalRefresh();
                 MarketDataIncrementalRefresh.NoMDEntries group = new MarketDataIncrementalRefresh.NoMDEntries();
                 group.set(new MDUpdateAction(MDUpdateAction.NEW));

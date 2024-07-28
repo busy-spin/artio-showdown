@@ -28,6 +28,13 @@
             <artifactId>agrona</artifactId>
             <version>1.21.2</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.hdrhistogram/HdrHistogram -->
+        <dependency>
+            <groupId>org.hdrhistogram</groupId>
+            <artifactId>HdrHistogram</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
     </dependencies>
 
 </project>
