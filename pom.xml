@@ -12,6 +12,7 @@
         <module>qfj-acceptor</module>
         <module>artio-initiator</module>
         <module>qfj-initiator</module>
+        <module>artio-acceptor</module>
     </modules>
 
     <properties>

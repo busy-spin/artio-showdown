@@ -106,8 +106,10 @@ public class MarketDataPublisherAgent implements Agent {
 
                 messageInThisWindow++;
             }
+            return 1;
+        } else {
+            return 0;
         }
-        return 0;
     }
 
     @Override

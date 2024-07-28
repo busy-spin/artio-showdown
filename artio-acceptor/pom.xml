@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.example</groupId>
+        <artifactId>artio-showdown</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>artio-acceptor</artifactId>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <generatedSourcesDirectory>${project.build.directory}/generated-sources/main/java</generatedSourcesDirectory>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.aeron</groupId>
+            <artifactId>aeron-all</artifactId>
+            <version>1.40.0</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.co.real-logic</groupId>
+            <artifactId>artio-core</artifactId>
+            <version>0.149</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.github.busy-spin</groupId>
+                <artifactId>artio-codec-generator</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>artio</id>
+                        <goals>
+                            <goal>artio-gen</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <dictFiles>${project.basedir}/src/main/resources/FIX44.xml</dictFiles>
+                            <generatedSrcDir>${generatedSourcesDirectory}/</generatedSrcDir>
+                            <parentPackage>io.github.busy_spin.artio_acceptor.codecs</parentPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <generatedSourcesDirectory>${generatedSourcesDirectory}</generatedSourcesDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

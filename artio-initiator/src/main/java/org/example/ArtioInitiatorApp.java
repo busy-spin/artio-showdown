@@ -12,6 +12,7 @@ public class ArtioInitiatorApp {
     public static void main(String[] args) {
         MediaDriver.Context ctx = new MediaDriver
                 .Context().threadingMode(ThreadingMode.SHARED);
+        ctx.aeronDirectoryName(ctx.aeronDirectoryName() + "-init");
         MediaDriver mediaDriver = MediaDriver.launchEmbedded(ctx);
 
         EngineConfiguration enginConfig = new EngineConfiguration()
