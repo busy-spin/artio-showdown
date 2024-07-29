@@ -2,6 +2,7 @@ package org.example;
 
 import io.github.busy_spin.artio_acceptor.codecs.MDUpdateAction;
 import io.github.busy_spin.artio_acceptor.codecs.builder.MarketDataIncrementalRefreshEncoder;
+import io.github.busy_spin.artio_acceptor.codecs.builder.InstrumentEncoder;
 import org.agrona.concurrent.Agent;
 import org.agrona.concurrent.SystemEpochClock;
 
@@ -9,13 +10,13 @@ public class PublisherAgent implements Agent {
 
     private final ArtioLifecycleHandler lifecycleHandler;
 
-    private final int maxMessagePerWindow = 500;
+    private final int maxMessagePerWindow = 10;
 
     private int messageInThisWindow = 0;
 
     private long windowStartTime = SystemEpochClock.INSTANCE.time();
 
-    private final long windowLengthInMs = 1;
+    private final long windowLengthInMs = 10;
 
     private final MarketDataIncrementalRefreshEncoder encoder = new MarketDataIncrementalRefreshEncoder();
 
@@ -35,19 +36,18 @@ public class PublisherAgent implements Agent {
         if (lifecycleHandler.isReadyToFire()) {
             long timeNow = SystemEpochClock.INSTANCE.time();
             if (timeNow > windowStartTime + windowLengthInMs) {
-                System.out.println("Window over - published " + messageInThisWindow);
                 windowStartTime = timeNow;
                 messageInThisWindow = 0;
             }
 
             if (messageInThisWindow < maxMessagePerWindow) {
-                // TODO: fire
-                MarketDataIncrementalRefreshEncoder.MDEntriesGroupEncoder groupEncoder = encoder.mDEntriesGroup(2);
+                MarketDataIncrementalRefreshEncoder.MDEntriesGroupEncoder groupEncoder = encoder.mDEntriesGroup(1);
                 groupEncoder.orderID("BNA");
                 groupEncoder.mDEntrySize(1000, 0);
                 groupEncoder.mDEntryPx(1297, -2);
                 groupEncoder.mDUpdateAction(MDUpdateAction.NEW);
-                io.github.busy_spin.artio_acceptor.codecs.builder.InstrumentEncoder instrument = groupEncoder.instrument();
+                InstrumentEncoder instrument = groupEncoder.instrument();
+                instrument.symbol("BNA");
 
                 lifecycleHandler.session().trySend(encoder);
                 messageInThisWindow++;
