@@ -19,7 +19,8 @@ public class Main {
         AgentRunner.startOnThread(agentRunner, new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
-                Thread thread = new Thread();
+                Thread thread = new Thread(r);
+                thread.setName("abc");
                 thread.setDaemon(false);
                 return thread;
             }
